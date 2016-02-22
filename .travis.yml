@@ -12,3 +12,7 @@ cache:
 
 # Faster builds without sudo.
 sudo: false
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
