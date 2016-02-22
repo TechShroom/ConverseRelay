@@ -7,21 +7,20 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
-
 
 <Pane prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="118.0" prefWidth="400.0" vgap="5.0">
+      <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" vgap="5.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="ALWAYS" percentWidth="59.0" />
-          <ColumnConstraints halignment="CENTER" percentWidth="95.0" />
-            <ColumnConstraints halignment="CENTER" minWidth="10.0" percentWidth="16.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="ALWAYS" percentWidth="60.0" />
+          <ColumnConstraints halignment="CENTER" percentWidth="92.0" />
+            <ColumnConstraints halignment="CENTER" minWidth="10.0" percentWidth="18.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints />
+          <RowConstraints />
+            <RowConstraints />
         </rowConstraints>
          <children>
             <Label text="Network Name:" GridPane.halignment="RIGHT">
