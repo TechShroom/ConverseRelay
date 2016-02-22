@@ -19,6 +19,6 @@ addons:
       - oracle-java8-installer
 # Code Coverage!
 before_install:
-  - pip install codecov
+  - pip install --user codecov
 after_success:
   - codecov
