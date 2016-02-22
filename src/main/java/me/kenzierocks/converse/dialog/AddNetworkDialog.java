@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -17,15 +16,18 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.net.InetAddresses;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
+import javafx.collections.SetChangeListener.Change;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.TextInputControl;
-import javafx.scene.control.Alert.AlertType;
 import me.kenzierocks.converse.Network;
 
 public class AddNetworkDialog extends Dialog<Network> {
@@ -76,7 +78,8 @@ public class AddNetworkDialog extends Dialog<Network> {
     }
     private final ButtonType cancel;
     private final ButtonType create;
-    private final EnumSet<FieldEntry> valid = EnumSet.noneOf(FieldEntry.class);
+    private final ObservableSet<FieldEntry> valid =
+            FXCollections.observableSet(EnumSet.noneOf(FieldEntry.class));
 
     public AddNetworkDialog() {
         this.cancel = ButtonType.CANCEL;
@@ -108,6 +111,7 @@ public class AddNetworkDialog extends Dialog<Network> {
     }
 
     private void attachValidation() {
+        this.valid.addListener(this::onValidatedFieldChange);
         attachValidator(FieldEntry.NET_PORT, val -> {
             try {
                 int i = Integer.parseInt(val);
@@ -127,7 +131,17 @@ public class AddNetworkDialog extends Dialog<Network> {
             }
             return true;
         });
-        attachValidator(FieldEntry.NET_NAME, val -> true);
+        attachValidator(FieldEntry.NET_NAME,
+                val -> !Strings.isNullOrEmpty(val.trim()));
+    }
+
+    private void onValidatedFieldChange(Change<? extends FieldEntry> change) {
+        updateCreateButton();
+        if (change.wasAdded()) {
+            setValidationMark(change.getElementAdded(), true);
+        } else if (change.wasRemoved()) {
+            setValidationMark(change.getElementRemoved(), false);
+        }
     }
 
     private void attachValidator(FieldEntry field,
@@ -150,7 +164,6 @@ public class AddNetworkDialog extends Dialog<Network> {
                         t);
                 throw t;
             }
-            updateCreateButton();
         };
         TextInputControl inputBox = getInputBox(field);
         inputBox.textProperty().addListener((obs, oldVal, newVal) -> {
@@ -196,6 +209,17 @@ public class AddNetworkDialog extends Dialog<Network> {
     private TextInputControl getInputBox(FieldEntry id) {
         return (TextInputControl) getDialogPane()
                 .lookup("#" + TackOn.INPUT.to(id));
+    }
+
+    private void setValidationMark(FieldEntry id, boolean on) {
+        String checkedBox = "\u2611";
+        String uncheckedBox = "\u2610";
+        getValidationMarkBox(id).setText(on ? checkedBox : uncheckedBox);
+    }
+
+    private Labeled getValidationMarkBox(FieldEntry id) {
+        return (Labeled) getDialogPane()
+                .lookup("#" + TackOn.VALIDATE_MARK.to(id));
     }
 
 }
