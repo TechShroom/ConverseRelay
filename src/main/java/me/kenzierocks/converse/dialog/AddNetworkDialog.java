@@ -105,9 +105,6 @@ public class AddNetworkDialog extends Dialog<Network> {
         setResultConverter(this::buttonTypeToNetwork);
         attachValidation();
         updateCreateButton();
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setContentText("Judah best!");
-        alert.show();
     }
 
     private void attachValidation() {
