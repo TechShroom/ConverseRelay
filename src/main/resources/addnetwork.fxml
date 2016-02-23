@@ -14,8 +14,8 @@
       <GridPane alignment="CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" vgap="5.0">
         <columnConstraints>
           <ColumnConstraints hgrow="ALWAYS" percentWidth="60.0" />
-          <ColumnConstraints halignment="CENTER" percentWidth="92.0" />
-            <ColumnConstraints halignment="CENTER" minWidth="10.0" percentWidth="18.0" prefWidth="100.0" />
+          <ColumnConstraints halignment="CENTER" percentWidth="95.0" />
+            <ColumnConstraints halignment="CENTER" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints />
@@ -29,12 +29,17 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </Label>
-            <Label prefWidth="115.0" text="Network Address:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+            <Label text="Network Address:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </Label>
             <Label text="Network Port:" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Nick Name:" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
@@ -54,10 +59,18 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </TextField>
+            <TextField id="input-network-port" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
             <Label id="validate-mark-network-name" text="☐" GridPane.columnIndex="2">
                <font>
                   <Font size="24.0" />
-               </font></Label>
+               </font>
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin></Label>
             <Label id="validate-mark-network-address" prefHeight="16.0" prefWidth="0.0" text="☐" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <font>
                   <Font size="24.0" />
@@ -66,16 +79,6 @@
                <font>
                   <Font size="24.0" />
                </font></Label>
-            <Label text="Network Port:" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </Label>
-            <TextField id="input-network-port" GridPane.columnIndex="1" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </TextField>
             <Label id="validate-mark-network-port" text="☐" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <font>
                   <Font size="24.0" />
