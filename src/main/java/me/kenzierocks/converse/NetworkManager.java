@@ -10,7 +10,6 @@ import org.kitteh.irc.lib.net.engio.mbassy.listener.Handler;
 import com.google.common.collect.ImmutableMap;
 
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import me.kenzierocks.converse.jfx.StylableTreeItem;
 
