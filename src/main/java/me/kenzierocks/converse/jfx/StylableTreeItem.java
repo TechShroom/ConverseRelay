@@ -9,7 +9,9 @@ import javafx.scene.control.TreeItem;
 public class StylableTreeItem<T> {
     
     public static StylableTreeItem<String> fromTreeItem(TreeItem<String> item) {
-        return new StylableTreeItem<>(item, item.getValue());
+        StylableTreeItem<String> wrapper = new StylableTreeItem<>(item, item.getValue());
+        item.setValue("");
+        return wrapper;
     }
 
     private TreeItem<T> item;
