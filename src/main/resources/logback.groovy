@@ -1,7 +1,8 @@
 appender("syserr", ConsoleAppender) {
-  target = "System.err"
-  encoder(PatternLayoutEncoder) {
-    pattern = "[%d{dd_MMM_yy-HH:mm:ss}][%logger{1}@%level] %msg%n"
-  }
+    target = "System.err"
+    encoder(LayoutWrappingEncoder) {
+        charset = java.nio.charset.StandardCharsets.UTF_8
+        layout = new me.kenzierocks.converse.util.NotTerribleLoggingFormat()
+    }
 }
 root(DEBUG, ["syserr"])

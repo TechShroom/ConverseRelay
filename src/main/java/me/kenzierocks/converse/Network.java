@@ -20,9 +20,13 @@ import me.kenzierocks.converse.gsonadapt.autovalue.AutoGson;
 @AutoGson
 public abstract class Network {
 
+    public static final int DEFAULT_PORT = 6667;
+    public static final boolean DEFAULT_USE_SSL = false;
+
     public static final Builder builder() {
         Defaults defaults = ConverseRelay.CONFIG.getDefaults();
-        return builderNoDefaults().networkPort(6667).sslSupported(false)
+        return builderNoDefaults().networkPort(DEFAULT_PORT)
+                .useSsl(DEFAULT_USE_SSL)
                 .channelsToJoinOnStartup(ImmutableList.of())
                 .nickName(defaults.getNickName())
                 .realName(defaults.getRealName())
@@ -46,7 +50,7 @@ public abstract class Network {
 
         public abstract Builder networkPort(int val);
 
-        public abstract Builder sslSupported(boolean val);
+        public abstract Builder useSsl(boolean val);
 
         public abstract Builder nickName(@Nullable String val);
 
@@ -84,7 +88,7 @@ public abstract class Network {
 
     public abstract int getNetworkPort();
 
-    public abstract boolean isSslSupported();
+    public abstract boolean getUseSsl();
 
     public abstract String getNickName();
 
@@ -102,12 +106,12 @@ public abstract class Network {
     public String getNetworkName() {
         return Optional.ofNullable(getForcedNetworkName())
                 .orElseGet(() -> getNetworkAddress() + ":" + getNetworkPort()
-                        + (isSslSupported() ? "+" : ""));
+                        + (getUseSsl() ? "+" : ""));
     }
 
     public Client createClient() {
         ClientBuilder builder = Client.builder().serverHost(getNetworkAddress())
-                .serverPort(getNetworkPort()).secure(isSslSupported())
+                .serverPort(getNetworkPort()).secure(getUseSsl())
                 .name(getNetworkName()).nick(getNickName());
         if (getRealName() != null) {
             builder.realName(getRealName());

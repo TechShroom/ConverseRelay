@@ -37,14 +37,30 @@ public abstract class Defaults {
 
     @Nullable
     public abstract String getNickName();
+    
+    public final boolean hasNickName() {
+        return getNickName() != null;
+    }
 
     @Nullable
     public abstract String getRealName();
+    
+    public final boolean hasRealName() {
+        return getRealName() != null;
+    }
 
     @Nullable
     public abstract String getPassword();
+    
+    public final boolean hasPassword() {
+        return getPassword() != null;
+    }
 
     @Nullable
     public abstract String getAccountName();
+    
+    public final boolean hasAccountName() {
+        return getAccountName() != null;
+    }
 
 }

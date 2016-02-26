@@ -1,6 +1,10 @@
 package me.kenzierocks.converse;
 
+import static com.google.common.base.Preconditions.checkState;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -22,11 +26,30 @@ import javafx.stage.Stage;
 
 public class ConverseRelay extends Application {
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(ConverseRelay.class);
+    private static final Logger LOGGER;
 
     public static final Configuration CONFIG;
     static {
+        // Ugly hack to get JavaFX to shutdown on logging fail
+        ByteArrayOutputStream capture = new ByteArrayOutputStream();
+        PrintStream oldErr = System.err;
+        System.setErr(new PrintStream(capture, false));
+        LOGGER = LoggerFactory.getLogger(ConverseRelay.class);
+        System.err.flush();
+        System.setErr(oldErr);
+        String captured = capture.toString();
+        try {
+            checkState(
+                    !captured.contains(
+                            "Failed to instantiate [ch.qos.logback.classic.LoggerContext]"),
+                    "failed to load logging: %s", captured);
+        } catch (IllegalStateException boom) {
+            boom.printStackTrace();
+            System.err.flush();
+            // Force shutdown.
+            System.exit(1);
+        }
+        System.err.print(captured);
         Configuration tmp;
         try {
             tmp = Configuration.loadConfig();
