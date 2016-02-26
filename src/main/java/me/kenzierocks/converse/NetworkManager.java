@@ -50,8 +50,11 @@ public class NetworkManager {
         this.clients.put(network, client);
         TreeItem<String> networkNode =
                 new TreeItem<String>(network.getNetworkName());
-        client.addChannel(network.getChannelsToJoinOnStartup().stream()
-                .toArray(String[]::new));
+        String[] channels = network.getChannelsToJoinOnStartup().stream()
+                .toArray(String[]::new);
+        if (channels.length > 0) {
+            client.addChannel(channels);
+        }
         ImmutableMap.Builder<String, TreeItem<String>> channelItems =
                 ImmutableMap.builder();
         network.getChannelsToJoinOnStartup().stream().forEach(chan -> {

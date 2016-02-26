@@ -3,18 +3,13 @@ package me.kenzierocks.converse.controller;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import me.kenzierocks.converse.ConverseRelay;
 import me.kenzierocks.converse.dialog.AddNetworkDialog;
+import me.kenzierocks.converse.dialog.SetDefaultsDialog;
 
 public class Controller {
-
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(Controller.class);
 
     @FXML
     public void quit() {
@@ -29,6 +24,12 @@ public class Controller {
                         .collect(Collectors.toList());
             });
         });
+    }
+
+    @FXML
+    public void openSetDefaultsDialog() {
+        new SetDefaultsDialog().showAndWait()
+                .ifPresent(ConverseRelay.CONFIG::setDefaults);
     }
 
 }

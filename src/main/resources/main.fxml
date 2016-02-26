@@ -18,6 +18,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
+                  <MenuItem mnemonicParsing="false" onAction="#openSetDefaultsDialog" text="Configure Defaults" />
                   <MenuItem mnemonicParsing="false" onAction="#openAddNetworkDialog" text="Add Network" />
               <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
             </items>
