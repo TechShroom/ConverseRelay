@@ -81,8 +81,8 @@ configurations.all {
 def LOGBACK_VERSION = '1.1.5'
 def SLF_VERSION = '1.7.16'
 dependencies {
-    runtime group: 'ch.qos.logback', name: 'logback-core', version: LOGBACK_VERSION
-    runtime group: 'ch.qos.logback', name: 'logback-classic', version: LOGBACK_VERSION
+    compile group: 'ch.qos.logback', name: 'logback-core', version: LOGBACK_VERSION
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: LOGBACK_VERSION
     // Because why not?
     runtime group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.5'
     compile group: 'org.slf4j', name: 'slf4j-api', version: SLF_VERSION
