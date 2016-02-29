@@ -182,16 +182,24 @@ public class Configuration {
     private CompletableFuture<Optional<IOException>>
             saveConfigAsync(Path path) {
         Configuration crossThreadSafetyNet = cloneByJson();
-        return CompletableFuture.supplyAsync(() -> useFile(path, p -> {
-            try (
-                    Writer writer = Files.newBufferedWriter(path)) {
-                LOGGER.debug("Saving config file to " + path.toAbsolutePath());
-                dataHandler.toJson(crossThreadSafetyNet, writer);
-            } catch (IOException t) {
-                return Optional.of(t);
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return useFile(path, p -> {
+                    try (
+                            Writer writer = Files.newBufferedWriter(path)) {
+                        LOGGER.debug("Saving config file to "
+                                + path.toAbsolutePath());
+                        dataHandler.toJson(crossThreadSafetyNet, writer);
+                    } catch (IOException t) {
+                        return Optional.of(t);
+                    }
+                    return Optional.empty();
+                });
+            } catch (Exception wtfJavac) {
+                // This block is due to javac being stupid.
+                throw Throwables.propagate(wtfJavac);
             }
-            return Optional.empty();
-        }), SAVE_THREADS);
+        }, SAVE_THREADS);
     }
 
     private void saveConfigOrLogException() {
