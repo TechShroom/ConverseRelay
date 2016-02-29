@@ -22,3 +22,6 @@ before_install:
   - pip install --user codecov
 after_success:
   - codecov
+after_script:
+  # Make sure to kill daemon
+  - ./gradlew --stop
