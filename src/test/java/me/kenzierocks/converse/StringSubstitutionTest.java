@@ -101,6 +101,24 @@ public class StringSubstitutionTest {
         assertEqual(expected, input, map);
     }
 
+    @Test
+    public void emptyString() {
+        String input = "";
+        String expected = "";
+        Map<String, String> map = ImmutableMap.of();
+        assertEqual(expected, input, map);
+    }
+
+    @Test
+    public void nonBMPCodePoints() {
+        // Cool™
+        String input = "${productNameNo™}™";
+        String expected = "ConverseRelay™";
+        Map<String, String> map =
+                ImmutableMap.of("productNameNo™", "ConverseRelay");
+        assertEqual(expected, input, map);
+    }
+
     private void assertMissingKey(String format,
             Map<String, String> replacements) {
         try {
