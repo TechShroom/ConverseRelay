@@ -4,7 +4,7 @@ jdk:
   - oraclejdk8
 # Caching for Gradle files, prevents hitting Maven too much.
 before_cache:
-  - find . -name '*.lock' -print -exec 'rm -f {} \;'
+  - find . -name '*.lock' -print -exec rm -f {} \;
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
   directories:
