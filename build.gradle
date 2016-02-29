@@ -44,7 +44,29 @@ idea.project.languageLevel = util.javaVersion
 // Surprise JFX!
 eclipse.project {
     natures 'org.eclipse.xtext.ui.shared.xtextNature'
+    natures 'org.eclipse.buildship.core.gradleprojectnature'
     buildCommand 'org.eclipse.xtext.ui.shared.xtextBuilder'
+    buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
+}
+// I don't even.
+task eclipseSettings() << {
+    def json = """|{
+                  |  "1.0": {
+                  |    "project_path": ":",
+                  |    "project_dir": "${project.file('.')}",
+                  |    "connection_project_dir": "${project.file('.')}",
+                  |    "connection_gradle_user_home": null,
+                  |    "connection_gradle_distribution": "GRADLE_DISTRIBUTION(WRAPPER)",
+                  |    "connection_java_home": null,
+                  |    "connection_jvm_arguments": "",
+                  |    "connection_arguments": ""
+                  |  }
+                  |}\n""".stripMargin()
+    // Write it all to gradle prefs
+    file('.settings/gradle.prefs').write json
+}
+getTasksByName('eclipse', true).each {
+    it.dependsOn eclipseSettings
 }
 
 version = '0.0.1-SNAPSHOT'
