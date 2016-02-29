@@ -119,11 +119,11 @@ public class StringSubstitutionTest {
 
     @Test
     public void nonBMPCodePoints() {
-        // Cool™
-        String input = "${productNameNo™}™";
+        // \uD83C\uDDFA\uD83C\uDDF8 -> American flag
+        String input = "${productName\uD83C\uDDFA\uD83C\uDDF8}™";
         String expected = "ConverseRelay™";
-        Map<String, String> map =
-                ImmutableMap.of("productNameNo™", "ConverseRelay");
+        Map<String, String> map = ImmutableMap
+                .of("productName\uD83C\uDDFA\uD83C\uDDF8", "ConverseRelay");
         assertEqual(expected, input, map);
     }
 
