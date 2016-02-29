@@ -94,6 +94,14 @@ public class StringSubstitutionTest {
     }
 
     @Test
+    public void escapedBackslash() {
+        String input = "it's a \\\\${foo}";
+        String expected = "it's a \\circle";
+        Map<String, String> map = ImmutableMap.of("foo", "circle");
+        assertEqual(expected, input, map);
+    }
+
+    @Test
     public void backslash() {
         String input = "it's \\a ${foo}";
         String expected = "it's \\a circle";

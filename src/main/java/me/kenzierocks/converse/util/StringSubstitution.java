@@ -39,7 +39,12 @@ public final class StringSubstitution {
         for (PrimitiveIterator.OfInt iter = format.codePoints().iterator(); iter
                 .hasNext();) {
             int point = iter.nextInt();
+            StringBuilder target =
+                    MoreObjects.firstNonNull(keySoFar, notKeySoFar);
             if (point == '\\') {
+                if (seenBackslash) {
+                    target.append('\\');
+                }
                 seenBackslash = !seenBackslash;
                 continue;
             }
@@ -63,8 +68,6 @@ public final class StringSubstitution {
                         keySoFar = null;
                         continue;
                     }
-                    StringBuilder target =
-                            MoreObjects.firstNonNull(keySoFar, notKeySoFar);
                     if (seenBackslash) {
                         if (seenDollar) {
                             target.append('$');
