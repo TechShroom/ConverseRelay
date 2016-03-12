@@ -31,7 +31,8 @@ public abstract class Network {
                 .nickName(defaults.getNickName())
                 .realName(defaults.getRealName())
                 .password(defaults.getPassword())
-                .accountName(defaults.getAccountName());
+                .accountName(defaults.getAccountName())
+                .quitMessage(defaults.getQuitMessage());
     }
 
     public static final Builder builderNoDefaults() {
@@ -74,6 +75,11 @@ public abstract class Network {
         @Nullable
         public abstract String getAccountName();
 
+        public abstract Builder quitMessage(@Nullable String val);
+
+        @Nullable
+        public abstract String getQuitMessage();
+
         public abstract Network build();
 
     }
@@ -102,6 +108,9 @@ public abstract class Network {
 
     @Nullable
     public abstract String getAccountName();
+
+    @Nullable
+    public abstract String getQuitMessage();
 
     public String getNetworkName() {
         return Optional.ofNullable(getForcedNetworkName())
