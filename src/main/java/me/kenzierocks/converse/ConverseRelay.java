@@ -2,7 +2,6 @@ package me.kenzierocks.converse;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -23,6 +22,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
+import me.kenzierocks.converse.util.RecordingPrintStream;
 
 public class ConverseRelay extends Application {
 
@@ -31,9 +31,9 @@ public class ConverseRelay extends Application {
     public static final Configuration CONFIG;
     static {
         // Ugly hack to get JavaFX to shutdown on logging fail
-        ByteArrayOutputStream capture = new ByteArrayOutputStream();
+        RecordingPrintStream capture = new RecordingPrintStream(System.err);
         PrintStream oldErr = System.err;
-        System.setErr(new PrintStream(capture, false));
+        System.setErr(capture);
         LOGGER = LoggerFactory.getLogger(ConverseRelay.class);
         System.err.flush();
         System.setErr(oldErr);
@@ -49,7 +49,6 @@ public class ConverseRelay extends Application {
             // Force shutdown.
             System.exit(1);
         }
-        System.err.print(captured);
         Configuration tmp;
         try {
             tmp = Configuration.loadConfig();
