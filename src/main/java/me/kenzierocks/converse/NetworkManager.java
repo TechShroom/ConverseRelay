@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import me.kenzierocks.converse.jfx.StylableTreeItem;
+import me.kenzierocks.converse.listeners.AddChannelListener;
 
 /**
  * Handles attaching networks to the tree and connecting the clients.
@@ -29,6 +30,8 @@ public class NetworkManager {
         private PerNetworkManager(TreeItem<String> networkItem, Network network,
                 Client client, Map<String, TreeItem<String>> channelItems) {
             this.networkItem = StylableTreeItem.fromTreeItem(networkItem);
+            this.networkItem.getStylableItem().getStyleClass()
+                    .add("dscn-network");
             this.network = network;
             this.client = client;
             this.channelItems = channelItems;
@@ -37,8 +40,11 @@ public class NetworkManager {
         @Handler
         public void onConnected(ClientConnectedEvent event) {
             Platform.runLater(() -> {
-                this.networkItem.setActualText(
-                        this.networkItem.getActualText() + " is connected!");
+                this.networkItem.getStylableItem().getStyleClass()
+                        .remove("dscn-network");
+                this.networkItem.getStylableItem().getStyleClass()
+                        .add("conn-network");
+                this.networkItem.getStylableItem().applyCss();
             });
         }
 
@@ -54,7 +60,8 @@ public class NetworkManager {
         String[] channels = network.getChannelsToJoinOnStartup().stream()
                 .toArray(String[]::new);
         if (channels.length > 0) {
-            client.addChannel(channels);
+            client.getEventManager()
+                    .registerEventListener(new AddChannelListener(channels));
         }
         ImmutableMap.Builder<String, TreeItem<String>> channelItems =
                 ImmutableMap.builder();

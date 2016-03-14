@@ -110,6 +110,9 @@ public class ConverseRelay extends Application {
             @SuppressWarnings("unchecked")
             TreeView<String> netView =
                     (TreeView<String>) parent.lookup("#network-tree");
+            ((Parent) netView.getParent()).getStylesheets()
+                    .add(getClass().getClassLoader()
+                            .getResource("css/network-label.css").toString());
             TreeItem<String> root = new TreeItem<>();
             root.getChildren()
                     .addAll(CONFIG.getNetworks().stream()
