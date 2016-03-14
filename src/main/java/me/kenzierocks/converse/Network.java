@@ -125,10 +125,6 @@ public abstract class Network {
         if (getRealName() != null) {
             builder.realName(getRealName());
         }
-        Consumer<Client> joinChannels = client -> {
-            getChannelsToJoinOnStartup().forEach(client::addChannel);
-        };
-        builder.afterBuildConsumer(joinChannels);
         if (getPassword() != null) {
             if (getAccountName() != null) {
                 Consumer<Client> nickServAndSasl = client -> {
@@ -137,8 +133,7 @@ public abstract class Network {
                     client.getAuthManager().addProtocol(new SaslPlain(client,
                             getAccountName(), getPassword()));
                 };
-                builder.afterBuildConsumer(
-                        nickServAndSasl.andThen(joinChannels));
+                builder.afterBuildConsumer(nickServAndSasl);
             } else {
                 builder.serverPassword(getPassword());
             }
