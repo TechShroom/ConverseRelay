@@ -13,4 +13,4 @@ appender("syserr-verbose", ConsoleAppender) {
     }
 }
 root(DEBUG, ["syserr"])
-logger("overrides.std.err", ["syserr.verbose"])
+logger("overrides.std.err", null, ["syserr.verbose"])
