@@ -2,6 +2,7 @@ package me.kenzierocks.converse;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.event.client.ClientConnectedEvent;
@@ -65,6 +66,14 @@ public class NetworkManager {
         client.getEventManager().registerEventListener(new PerNetworkManager(
                 networkNode, network, client, channelItems.build()));
         return networkNode;
+    }
+
+    public void shutdown() {
+        this.clients.forEach((net, conn) -> {
+            String quit = Optional.ofNullable(net.getQuitMessage()).orElse(
+                    ConverseRelay.CONFIG.getDefaults().getQuitMessage());
+            conn.shutdown(quit == null ? "ConverseRelay™" : quit);
+        });
     }
 
 }

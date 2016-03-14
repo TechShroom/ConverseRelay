@@ -40,7 +40,7 @@ public class NTLoggingFormatTest {
     }
 
     private final NotTerribleLoggingFormat loggingFormat =
-            new NotTerribleLoggingFormat();
+            new NotTerribleLoggingFormat(false);
 
     @Test
     public void normalLog() {

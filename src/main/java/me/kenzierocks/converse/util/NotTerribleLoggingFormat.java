@@ -17,6 +17,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 
 import ch.qos.logback.classic.pattern.Abbreviator;
+import ch.qos.logback.classic.pattern.ClassOfCallerConverter;
 import ch.qos.logback.classic.pattern.TargetLengthBasedClassNameAbbreviator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
@@ -32,6 +33,8 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
             DateTimeFormatter.ofPattern(DATE_FORMAT);
     private static final Abbreviator LOGGER_ABBREVIATOR =
             new TargetLengthBasedClassNameAbbreviator(1);
+    private static final ClassOfCallerConverter CLASS_CONVERTER =
+            new ClassOfCallerConverter();
 
     /**
      * Modeled after {@link Exception#printStackTrace()}. Doesn't use prefix for
@@ -186,6 +189,12 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
 
     }
 
+    private final boolean verbose;
+
+    public NotTerribleLoggingFormat(boolean verbose) {
+        this.verbose = verbose;
+    }
+
     @Override
     public String doLayout(ILoggingEvent event) {
         StringBuilder buf = new StringBuilder();
@@ -199,6 +208,12 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
         // Level
         buf.append('@').append(event.getLevel()).append(']');
         buf.append(' ');
+        // Verbosity
+        if (this.verbose) {
+            // Class + method + line number data
+            buf.append('[').append(CLASS_CONVERTER.convert(event)).append(']');
+            buf.append(' ');
+        }
         // Check that there's no weird stuff going on.
         assert buf.indexOf("\n") == -1;
         // Capture the indent at which the message is printed, for exceptions

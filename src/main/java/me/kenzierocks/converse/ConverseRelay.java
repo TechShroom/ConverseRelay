@@ -2,9 +2,11 @@ package me.kenzierocks.converse;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -22,7 +24,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
-import me.kenzierocks.converse.util.RecordingPrintStream;
+import me.kenzierocks.converse.util.SplittingOutputStream;
 
 public class ConverseRelay extends Application {
 
@@ -31,9 +33,11 @@ public class ConverseRelay extends Application {
     public static final Configuration CONFIG;
     static {
         // Ugly hack to get JavaFX to shutdown on logging fail
-        RecordingPrintStream capture = new RecordingPrintStream(System.err);
         PrintStream oldErr = System.err;
-        System.setErr(capture);
+        ByteArrayOutputStream capture = new ByteArrayOutputStream(0);
+        PrintStream splitter =
+                SplittingOutputStream.splittingPrintStream(oldErr, capture);
+        System.setErr(splitter);
         LOGGER = LoggerFactory.getLogger(ConverseRelay.class);
         System.err.flush();
         System.setErr(oldErr);
@@ -44,8 +48,6 @@ public class ConverseRelay extends Application {
                             "Failed to instantiate [ch.qos.logback.classic.LoggerContext]"),
                     "failed to load logging: %s", captured);
         } catch (IllegalStateException boom) {
-            boom.printStackTrace();
-            System.err.flush();
             // Force shutdown.
             System.exit(1);
         }
@@ -70,10 +72,36 @@ public class ConverseRelay extends Application {
     public static void main(String[] args) throws Exception {
         LOGGER.info("Launching " + ConverseRelay.class.getName()
                 + " with arguments " + Arrays.toString(args));
+        // Quit on all exceptions.
+        Thread.setDefaultUncaughtExceptionHandler((t, ex) -> {
+            Platform.exit();
+            try {
+                ConverseRelay cr = getApplication();
+                cr.stop();
+            } catch (Throwable th) {
+                ex.addSuppressed(th);
+            }
+            ex.printStackTrace();
+        });
         Application.launch(args);
     }
 
-    private final NetworkManager netManager = new NetworkManager();
+    private static final AtomicReference<ConverseRelay> app =
+            new AtomicReference<>();
+
+    public static ConverseRelay getApplication() {
+        ConverseRelay unwrapped = app.get();
+        checkState(unwrapped != null, "No application has been launched");
+        return unwrapped;
+    }
+
+    {
+        if (!app.compareAndSet(null, this)) {
+            throw new IllegalStateException("Instance already exists!");
+        }
+    }
+
+    public final NetworkManager netManager = new NetworkManager();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -121,6 +149,11 @@ public class ConverseRelay extends Application {
         primaryStage.yProperty().addListener(this::onYChange);
         primaryStage.widthProperty().addListener(this::onWidthChange);
         primaryStage.heightProperty().addListener(this::onHeightChange);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        this.netManager.shutdown();
     }
 
     private void onWidthChange(ObservableValue<? extends Number> obs,
