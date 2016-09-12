@@ -9,6 +9,8 @@ import javax.annotation.Nullable;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.auth.NickServ;
 import org.kitteh.irc.client.library.feature.auth.SaslPlain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
@@ -113,6 +115,7 @@ public abstract class Network {
     }
 
     public Client createClient() {
+        Logger clientLogger = LoggerFactory.getLogger("clients." + getNetworkName() + ":" + getNickName());
         Client.Builder builder = Client.builder().serverHost(getNetworkAddress()).serverPort(getNetworkPort())
                 .secure(getUseSsl()).name(getNetworkName()).nick(getNickName());
         if (getRealName() != null) {
@@ -129,6 +132,9 @@ public abstract class Network {
                 builder.serverPassword(getPassword());
             }
         }
+        builder.listenException(e -> clientLogger.error("", e));
+        builder.listenInput(msg -> clientLogger.debug("I--> " + msg));
+        builder.listenOutput(msg -> clientLogger.debug("O<-- " + msg));
         return builder.build();
     }
 
