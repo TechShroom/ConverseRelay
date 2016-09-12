@@ -187,9 +187,7 @@ public class Configuration {
     private void saveConfigOrLogException() {
         Consumer<Exception> log = e -> LOGGER.warn("error saving config", e);
         try {
-            OhNoMoreFutures.whenCompleted(saveConfigAsync(), t -> {
-                t.ifPresent(log);
-            });
+            saveConfigAsync().get().ifPresent(log);
         } catch (Exception ex) {
             log.accept(ex);
         }
