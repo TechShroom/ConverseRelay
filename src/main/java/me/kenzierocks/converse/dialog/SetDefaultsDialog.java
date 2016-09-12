@@ -14,32 +14,24 @@ import me.kenzierocks.converse.dialog.Form.FieldEntry;
 import me.kenzierocks.converse.dialog.Form.FormImplementer;
 import me.kenzierocks.converse.util.IRCUtil;
 
-public class SetDefaultsDialog extends Dialog<Defaults>
-        implements FormImplementer {
+public class SetDefaultsDialog extends Dialog<Defaults> implements FormImplementer {
 
-    private static final FieldEntry NICK_NAME =
-            new FieldEntry("nick-name", "Nick name");
-    private static final FieldEntry REAL_NAME =
-            new FieldEntry("real-name", "Real name");
-    private static final FieldEntry PASSWORD =
-            new FieldEntry("password", "Password");
-    private static final FieldEntry ACCOUNT_NAME =
-            new FieldEntry("account-name", "Account name");
+    private static final FieldEntry NICK_NAME = new FieldEntry("nick-name", "Nick name");
+    private static final FieldEntry REAL_NAME = new FieldEntry("real-name", "Real name");
+    private static final FieldEntry PASSWORD = new FieldEntry("password", "Password");
+    private static final FieldEntry ACCOUNT_NAME = new FieldEntry("account-name", "Account name");
 
     private static final ButtonType CANCEL = ButtonType.CANCEL;
-    private static final ButtonType CREATE =
-            new ButtonType("Save", ButtonData.OK_DONE);
+    private static final ButtonType CREATE = new ButtonType("Save", ButtonData.OK_DONE);
 
     private final Form form;
 
     public SetDefaultsDialog() {
-        ObservableList<ButtonType> buttonTypes =
-                getDialogPane().getButtonTypes();
+        ObservableList<ButtonType> buttonTypes = getDialogPane().getButtonTypes();
         buttonTypes.clear();
         buttonTypes.add(CANCEL);
         buttonTypes.add(CREATE);
-        getDialogPane().setContent(this.form = Form.implement(this, NICK_NAME,
-                REAL_NAME, PASSWORD, ACCOUNT_NAME));
+        getDialogPane().setContent(this.form = Form.implement(this, NICK_NAME, REAL_NAME, PASSWORD, ACCOUNT_NAME));
         setResultConverter(this::convert);
         setTitle("Configure Defaults");
     }
@@ -61,8 +53,7 @@ public class SetDefaultsDialog extends Dialog<Defaults>
 
     @Override
     public void onValidateStateChange(Form form, boolean valid) {
-        Optional.ofNullable(getDialogPane().lookupButton(CREATE))
-                .ifPresent(b -> b.setDisable(!valid));
+        Optional.ofNullable(getDialogPane().lookupButton(CREATE)).ifPresent(b -> b.setDisable(!valid));
     }
 
     protected Defaults convert(ButtonType bt) {

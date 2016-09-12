@@ -29,12 +29,9 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
 
     private static final String DATE_FORMAT = "dd_MMM_yy-HH:mm:ss";
     @VisibleForTesting
-    public static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern(DATE_FORMAT);
-    private static final Abbreviator LOGGER_ABBREVIATOR =
-            new TargetLengthBasedClassNameAbbreviator(1);
-    private static final ClassOfCallerConverter CLASS_CONVERTER =
-            new ClassOfCallerConverter();
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
+    private static final Abbreviator LOGGER_ABBREVIATOR = new TargetLengthBasedClassNameAbbreviator(1);
+    private static final ClassOfCallerConverter CLASS_CONVERTER = new ClassOfCallerConverter();
 
     /**
      * Modeled after {@link Exception#printStackTrace()}. Doesn't use prefix for
@@ -54,23 +51,20 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
         private final StringBuilder targetBuilder;
         private final IThrowableProxy throwable;
         private final String indentString;
-        private final Set<IThrowableProxy> dejaVu =
-                Collections.newSetFromMap(new IdentityHashMap<>());
+        private final Set<IThrowableProxy> dejaVu = Collections.newSetFromMap(new IdentityHashMap<>());
         private final String caption;
 
         /**
          * Outward-facing constructor, for building conveniently.
          */
-        private PrintException(StringBuilder builder, IThrowableProxy throwable,
-                int indent) {
+        private PrintException(StringBuilder builder, IThrowableProxy throwable, int indent) {
             this(builder, throwable, indent, "", Collections.emptySet());
         }
 
         /**
          * Internal state constructor.
          */
-        private PrintException(StringBuilder builder, IThrowableProxy throwable,
-                int currentIndent, String caption,
+        private PrintException(StringBuilder builder, IThrowableProxy throwable, int currentIndent, String caption,
                 Set<IThrowableProxy> dejaVu) {
             this.targetBuilder = builder;
             this.throwable = throwable;
@@ -92,8 +86,7 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
                 emitMessage();
                 emitNewline();
 
-                StackTraceElementProxy[] stack =
-                        this.throwable.getStackTraceElementProxyArray();
+                StackTraceElementProxy[] stack = this.throwable.getStackTraceElementProxyArray();
                 int framesInCommon = this.throwable.getCommonFrames();
                 int framesToPrint = stack.length - framesInCommon;
                 for (int i = 0; i < framesToPrint; i++) {
@@ -126,8 +119,7 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
 
         private void emitFramesInCommon(int framesInCommon) {
             emitStackIndent();
-            this.exceptionBuilder.append("... ").append(framesInCommon)
-                    .append(" more");
+            this.exceptionBuilder.append("... ").append(framesInCommon).append(" more");
         }
 
         private void emitCircularReference() {
@@ -137,27 +129,23 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
         }
 
         private void emitSuppressed(IThrowableProxy se) {
-            new PrintException(this.exceptionBuilder, se, INDENT_INCREASE,
-                    SUPPRESSED_CAPTION, this.dejaVu).emit();
+            new PrintException(this.exceptionBuilder, se, INDENT_INCREASE, SUPPRESSED_CAPTION, this.dejaVu).emit();
         }
 
         private void emitCause(IThrowableProxy se) {
-            new PrintException(this.exceptionBuilder, se, 0, CAUSE_CAPTION,
-                    this.dejaVu).emit();
+            new PrintException(this.exceptionBuilder, se, 0, CAUSE_CAPTION, this.dejaVu).emit();
         }
 
         private void emitToReal() {
             String stuff = this.exceptionBuilder.toString();
-            List<String> lines = FluentIterable
-                    .from(Splitter.on('\n').split(stuff)).transform(line -> {
-                        if (line.trim().isEmpty()) {
-                            return "";
-                        } else {
-                            return this.indentString.concat(line);
-                        }
-                    }).toList();
-            for (Iterator<String> iterator = lines.iterator(); iterator
-                    .hasNext();) {
+            List<String> lines = FluentIterable.from(Splitter.on('\n').split(stuff)).transform(line -> {
+                if (line.trim().isEmpty()) {
+                    return "";
+                } else {
+                    return this.indentString.concat(line);
+                }
+            }).toList();
+            for (Iterator<String> iterator = lines.iterator(); iterator.hasNext();) {
                 String next = iterator.next();
                 this.targetBuilder.append(next);
                 if (!next.isEmpty() && iterator.hasNext()) {
@@ -169,8 +157,7 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
         private void emitMessage() {
             this.exceptionBuilder.append(this.throwable.getClassName());
             if (this.throwable.getMessage() != null) {
-                this.exceptionBuilder.append(": ")
-                        .append(this.throwable.getMessage());
+                this.exceptionBuilder.append(": ").append(this.throwable.getMessage());
             }
         }
 
@@ -199,12 +186,10 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
     public String doLayout(ILoggingEvent event) {
         StringBuilder buf = new StringBuilder();
         // Date
-        buf.append('[').append(DATE_FORMATTER.format(getUtcTime(event)))
-                .append(']');
+        buf.append('[').append(DATE_FORMATTER.format(getUtcTime(event))).append(']');
         buf.append(' ');
         // Logger
-        buf.append('[')
-                .append(LOGGER_ABBREVIATOR.abbreviate(event.getLoggerName()));
+        buf.append('[').append(LOGGER_ABBREVIATOR.abbreviate(event.getLoggerName()));
         // Level
         buf.append('@').append(event.getLevel()).append(']');
         buf.append(' ');
@@ -219,8 +204,7 @@ public class NotTerribleLoggingFormat extends LayoutBase<ILoggingEvent> {
         // Capture the indent at which the message is printed, for exceptions
         int messageIndent = buf.length();
         // Message
-        buf.append(event.getFormattedMessage())
-                .append(CoreConstants.LINE_SEPARATOR);
+        buf.append(event.getFormattedMessage()).append(CoreConstants.LINE_SEPARATOR);
         IThrowableProxy throwable = event.getThrowableProxy();
         if (throwable != null) {
             new PrintException(buf, throwable, messageIndent).emit();

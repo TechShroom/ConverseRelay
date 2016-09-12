@@ -9,22 +9,20 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 
 public class LoggingEvents {
 
-    private static final Logger LOGGER =
-            (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 
     public static Logger getDefaultLogger() {
         return LOGGER;
     }
 
-    public static ILoggingEvent create(String fqcn, Level level, String message,
-            Throwable throwable, Object... argArray) {
+    public static ILoggingEvent
+            create(String fqcn, Level level, String message, Throwable throwable, Object... argArray) {
         return create(fqcn, LOGGER, level, message, throwable, argArray);
     }
 
-    public static ILoggingEvent create(String fqcn, Logger logger, Level level,
-            String message, Throwable throwable, Object... argArray) {
-        return new LoggingEvent(fqcn, logger, level, message, throwable,
-                argArray);
+    public static ILoggingEvent
+            create(String fqcn, Logger logger, Level level, String message, Throwable throwable, Object... argArray) {
+        return new LoggingEvent(fqcn, logger, level, message, throwable, argArray);
     }
 
     private LoggingEvents() {

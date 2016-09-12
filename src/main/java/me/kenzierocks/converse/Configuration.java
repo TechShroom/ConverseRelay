@@ -48,16 +48,13 @@ public class Configuration {
 
         private SaveThreadProvider() {
             SecurityManager s = System.getSecurityManager();
-            this.group = (s != null) ? s.getThreadGroup()
-                    : Thread.currentThread().getThreadGroup();
-            this.namePrefix = "pool-" + poolNumber.getAndIncrement()
-                    + "-converse-save-thread-";
+            this.group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            this.namePrefix = "pool-" + poolNumber.getAndIncrement() + "-converse-save-thread-";
         }
 
         @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(this.group, r,
-                    this.namePrefix + this.threadNumber.getAndIncrement());
+            Thread t = new Thread(this.group, r, this.namePrefix + this.threadNumber.getAndIncrement());
             if (!t.isDaemon())
                 t.setDaemon(true);
             if (t.getPriority() != Thread.NORM_PRIORITY)
@@ -67,32 +64,26 @@ public class Configuration {
 
     }
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(Configuration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
     private static final int CONFIG_VERSION = 1;
 
     private static final Gson dataHandler;
     private static final Gson cloneHandler;
     static {
-        GsonBuilder builder = new GsonBuilder().serializeNulls()
-                .disableHtmlEscaping()
-                .registerTypeAdapter(ImmutableList.class,
-                        new ImmutableListDeserializer())
+        GsonBuilder builder = new GsonBuilder().serializeNulls().disableHtmlEscaping()
+                .registerTypeAdapter(ImmutableList.class, new ImmutableListDeserializer())
                 .registerTypeAdapterFactory(new AutoValueAdapterFactory())
-                .registerTypeAdapter(OptionalInt.class,
-                        OptionalIntAdapter.INSTANCE);
+                .registerTypeAdapter(OptionalInt.class, OptionalIntAdapter.INSTANCE);
         cloneHandler = builder.create();
         dataHandler = builder.setPrettyPrinting().create();
     }
 
     private static Path getConfigPath() {
-        Path configPath =
-                Paths.get(".").resolve("config").resolve("config.cfg");
+        Path configPath = Paths.get(".").resolve("config").resolve("config.cfg");
         try {
             Files.createDirectories(configPath.getParent());
             if (Files.notExists(configPath)) {
-                LOGGER.debug("Creating config file at "
-                        + configPath.toAbsolutePath());
+                LOGGER.debug("Creating config file at " + configPath.toAbsolutePath());
                 Files.createFile(configPath);
                 new Configuration().saveConfig();
             }
@@ -104,8 +95,7 @@ public class Configuration {
 
     public static Configuration loadConfig() throws IOException {
         Configuration config = useFile(getConfigPath(), path -> {
-            try (
-                    Reader reader = Files.newBufferedReader(path)) {
+            try (Reader reader = Files.newBufferedReader(path)) {
                 LOGGER.debug("Loading config file");
                 return dataHandler.fromJson(reader, Configuration.class);
             }
@@ -115,12 +105,10 @@ public class Configuration {
             // ....
             // when it's needed.
             RuntimeException ex = new IllegalStateException(
-                    "Cannot convert config version " + config.getConfigVersion()
-                            + " to " + CONFIG_VERSION);
+                    "Cannot convert config version " + config.getConfigVersion() + " to " + CONFIG_VERSION);
             LOGGER.warn("Rewriting config due to error while upgrading.", ex);
             Path oldPath = getConfigPath();
-            Path newPath =
-                    oldPath.getParent().resolve(oldPath.getFileName() + ".bak");
+            Path newPath = oldPath.getParent().resolve(oldPath.getFileName() + ".bak");
             LOGGER.warn("Backing up old config to " + newPath.toAbsolutePath());
             try {
                 config.saveConfig(newPath);
@@ -133,11 +121,9 @@ public class Configuration {
         return config;
     }
 
-    private static final ExecutorService SAVE_THREADS =
-            Executors.newSingleThreadExecutor(new SaveThreadProvider());
+    private static final ExecutorService SAVE_THREADS = Executors.newSingleThreadExecutor(new SaveThreadProvider());
     private static final LoadingCache<Path, ReentrantLock> interThreadFileLocks =
-            CacheBuilder.newBuilder().weakValues()
-                    .build(CacheLoader.from(() -> new ReentrantLock()));
+            CacheBuilder.newBuilder().weakValues().build(CacheLoader.from(() -> new ReentrantLock()));
 
     private static ReentrantLock holdFileLock(Path path) {
         ReentrantLock lock = interThreadFileLocks.getUnchecked(path);
@@ -145,8 +131,7 @@ public class Configuration {
         return lock;
     }
 
-    private static <T, E extends Exception> T useFile(Path file,
-            FunctionEx<Path, T, E> user) throws E {
+    private static <T, E extends Exception> T useFile(Path file, FunctionEx<Path, T, E> user) throws E {
         ReentrantLock lock = null;
         try {
             lock = holdFileLock(file);
@@ -179,16 +164,13 @@ public class Configuration {
         return saveConfigAsync(getConfigPath());
     }
 
-    private CompletableFuture<Optional<IOException>>
-            saveConfigAsync(Path path) {
+    private CompletableFuture<Optional<IOException>> saveConfigAsync(Path path) {
         Configuration crossThreadSafetyNet = cloneByJson();
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return useFile(path, p -> {
-                    try (
-                            Writer writer = Files.newBufferedWriter(path)) {
-                        LOGGER.debug("Saving config file to "
-                                + path.toAbsolutePath());
+                    try (Writer writer = Files.newBufferedWriter(path)) {
+                        LOGGER.debug("Saving config file to " + path.toAbsolutePath());
                         dataHandler.toJson(crossThreadSafetyNet, writer);
                     } catch (IOException t) {
                         return Optional.of(t);
@@ -222,8 +204,7 @@ public class Configuration {
     private int configVersion = CONFIG_VERSION;
     private List<Network> networks = new ArrayList<>();
     private Defaults defaults = Defaults.builder().build();
-    private WindowSettings windowSettings =
-            WindowSettings.builder().width(800).height(600).build();
+    private WindowSettings windowSettings = WindowSettings.builder().width(800).height(600).build();
 
     public int getConfigVersion() {
         return this.configVersion;
@@ -233,8 +214,7 @@ public class Configuration {
         return ImmutableList.copyOf(this.networks);
     }
 
-    public void transformNetworks(
-            Function<List<Network>, List<Network>> transform) {
+    public void transformNetworks(Function<List<Network>, List<Network>> transform) {
         setNetworks(transform.apply(getNetworks()));
     }
 
@@ -260,8 +240,7 @@ public class Configuration {
         return this.windowSettings;
     }
 
-    public void transformWindowSettings(
-            Function<WindowSettings, WindowSettings> transform) {
+    public void transformWindowSettings(Function<WindowSettings, WindowSettings> transform) {
         setWindowSettings(transform.apply(getWindowSettings()));
     }
 

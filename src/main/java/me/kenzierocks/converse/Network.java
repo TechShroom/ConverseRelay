@@ -7,9 +7,8 @@ import java.util.function.Consumer;
 import javax.annotation.Nullable;
 
 import org.kitteh.irc.client.library.Client;
-import org.kitteh.irc.client.library.ClientBuilder;
-import org.kitteh.irc.client.library.auth.protocol.NickServ;
-import org.kitteh.irc.client.library.auth.protocol.SaslPlain;
+import org.kitteh.irc.client.library.feature.auth.NickServ;
+import org.kitteh.irc.client.library.feature.auth.SaslPlain;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
@@ -25,14 +24,10 @@ public abstract class Network {
 
     public static final Builder builder() {
         Defaults defaults = ConverseRelay.CONFIG.getDefaults();
-        return builderNoDefaults().networkPort(DEFAULT_PORT)
-                .useSsl(DEFAULT_USE_SSL)
-                .channelsToJoinOnStartup(ImmutableList.of())
-                .nickName(defaults.getNickName())
-                .realName(defaults.getRealName())
-                .password(defaults.getPassword())
-                .accountName(defaults.getAccountName())
-                .quitMessage(defaults.getQuitMessage());
+        return builderNoDefaults().networkPort(DEFAULT_PORT).useSsl(DEFAULT_USE_SSL)
+                .channelsToJoinOnStartup(ImmutableList.of()).nickName(defaults.getNickName())
+                .realName(defaults.getRealName()).password(defaults.getPassword())
+                .accountName(defaults.getAccountName()).quitMessage(defaults.getQuitMessage());
     }
 
     public static final Builder builderNoDefaults() {
@@ -114,24 +109,20 @@ public abstract class Network {
 
     public String getNetworkName() {
         return Optional.ofNullable(getForcedNetworkName())
-                .orElseGet(() -> getNetworkAddress() + ":" + getNetworkPort()
-                        + (getUseSsl() ? "+" : ""));
+                .orElseGet(() -> getNetworkAddress() + ":" + getNetworkPort() + (getUseSsl() ? "+" : ""));
     }
 
     public Client createClient() {
-        ClientBuilder builder = Client.builder().serverHost(getNetworkAddress())
-                .serverPort(getNetworkPort()).secure(getUseSsl())
-                .name(getNetworkName()).nick(getNickName());
+        Client.Builder builder = Client.builder().serverHost(getNetworkAddress()).serverPort(getNetworkPort())
+                .secure(getUseSsl()).name(getNetworkName()).nick(getNickName());
         if (getRealName() != null) {
             builder.realName(getRealName());
         }
         if (getPassword() != null) {
             if (getAccountName() != null) {
                 Consumer<Client> nickServAndSasl = client -> {
-                    client.getAuthManager().addProtocol(new NickServ(client,
-                            getAccountName(), getPassword()));
-                    client.getAuthManager().addProtocol(new SaslPlain(client,
-                            getAccountName(), getPassword()));
+                    client.getAuthManager().addProtocol(new NickServ(client, getAccountName(), getPassword()));
+                    client.getAuthManager().addProtocol(new SaslPlain(client, getAccountName(), getPassword()));
                 };
                 builder.afterBuildConsumer(nickServAndSasl);
             } else {

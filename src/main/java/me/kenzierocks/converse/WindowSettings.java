@@ -11,8 +11,7 @@ import me.kenzierocks.converse.gsonadapt.autovalue.AutoGson;
 public abstract class WindowSettings {
 
     public static Builder builder() {
-        return new AutoValue_WindowSettings.Builder().x(OptionalInt.empty())
-                .y(OptionalInt.empty());
+        return new AutoValue_WindowSettings.Builder().x(OptionalInt.empty()).y(OptionalInt.empty());
     }
 
     @AutoValue.Builder

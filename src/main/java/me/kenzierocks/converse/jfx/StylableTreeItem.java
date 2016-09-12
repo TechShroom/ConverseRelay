@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 
 public class StylableTreeItem<T> {
-    
+
     public static StylableTreeItem<String> fromTreeItem(TreeItem<String> item) {
         StylableTreeItem<String> wrapper = new StylableTreeItem<>(item, item.getValue());
         item.setValue("");

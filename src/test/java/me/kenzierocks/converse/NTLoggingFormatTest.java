@@ -25,27 +25,23 @@ public class NTLoggingFormatTest {
     private static final String EX_MESSAGE = "exception-message";
     private static final String FQCN = "class";
     private static final Level LEVEL = Level.INFO;
-    private static final String LOGGER_NAME =
-            LoggingEvents.getDefaultLogger().getName();
-    private static final StackTraceElement DEFAULT_FRAME =
-            new StackTraceElement(FQCN, "method", "file", 0);
+    private static final String LOGGER_NAME = LoggingEvents.getDefaultLogger().getName();
+    private static final StackTraceElement DEFAULT_FRAME = new StackTraceElement(FQCN, "method", "file", 0);
 
     private static Throwable newDefaultThrowable() {
         return new SingleStackFrameThrowable(EX_MESSAGE, DEFAULT_FRAME);
     }
 
     private static String formatTimestamp(long timestamp) {
-        return NotTerribleLoggingFormat.DATE_FORMATTER.format(ZonedDateTime
-                .ofInstant(Instant.ofEpochMilli(timestamp), ZoneOffset.UTC));
+        return NotTerribleLoggingFormat.DATE_FORMATTER
+                .format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneOffset.UTC));
     }
 
-    private final NotTerribleLoggingFormat loggingFormat =
-            new NotTerribleLoggingFormat(false);
+    private final NotTerribleLoggingFormat loggingFormat = new NotTerribleLoggingFormat(false);
 
     @Test
     public void normalLog() {
-        final String expectedFormat =
-                "[${date}] [${logger}@${level}] ${message}\n";
+        final String expectedFormat = "[${date}] [${logger}@${level}] ${message}\n";
         ILoggingEvent event = LoggingEvents.create(FQCN, LEVEL, MESSAGE, null);
         ImmutableMap.Builder<String, Object> repl = ImmutableMap.builder();
         repl.put("date", formatTimestamp(event.getTimeStamp()));
@@ -53,8 +49,7 @@ public class NTLoggingFormatTest {
         repl.put("level", LEVEL);
         repl.put("message", MESSAGE);
 
-        String expected = StringSubstitution.formatting(expectedFormat)
-                .substitute(repl.build());
+        String expected = StringSubstitution.formatting(expectedFormat).substitute(repl.build());
 
         String wouldLog = this.loggingFormat.doLayout(event);
         assertEquals(expected, wouldLog);
@@ -63,8 +58,7 @@ public class NTLoggingFormatTest {
     @Test
     public void commonExceptionPrinting() {
         final String loggerPreMessageFormat = "[${date}] [${logger}@${level}] ";
-        final String expectedFormat = loggerPreMessageFormat + "${message}\n"
-                + "${wspace}${exclass}: ${exmessage}\n"
+        final String expectedFormat = loggerPreMessageFormat + "${message}\n" + "${wspace}${exclass}: ${exmessage}\n"
                 + "${wspace}    at ${frame}\n";
         Throwable ex = newDefaultThrowable();
         ILoggingEvent event = LoggingEvents.create(FQCN, LEVEL, MESSAGE, ex);
@@ -73,8 +67,7 @@ public class NTLoggingFormatTest {
         repl.put("logger", LOGGER_NAME);
         repl.put("level", LEVEL);
 
-        int wspace = StringSubstitution.formatting(loggerPreMessageFormat)
-                .substitute(repl.build()).length();
+        int wspace = StringSubstitution.formatting(loggerPreMessageFormat).substitute(repl.build()).length();
         String whitespace = Strings.repeat(" ", wspace);
         repl.put("wspace", whitespace);
         repl.put("message", MESSAGE);
@@ -82,8 +75,7 @@ public class NTLoggingFormatTest {
         repl.put("exmessage", EX_MESSAGE);
         repl.put("frame", DEFAULT_FRAME);
 
-        String expected = StringSubstitution.formatting(expectedFormat)
-                .substitute(repl.build());
+        String expected = StringSubstitution.formatting(expectedFormat).substitute(repl.build());
 
         String wouldLog = this.loggingFormat.doLayout(event);
         assertEquals(expected, wouldLog);
@@ -92,10 +84,8 @@ public class NTLoggingFormatTest {
     @Test
     public void supressedExceptionPrinting() {
         final String loggerPreMessageFormat = "[${date}] [${logger}@${level}] ";
-        final String expectedFormat = loggerPreMessageFormat + "${message}\n"
-                + "${wspace}${exclass}: ${exmessage}\n"
-                + "${wspace}    at ${frame}\n"
-                + "${wspace}    Suppressed: ${exclass}: ${exmessage}\n"
+        final String expectedFormat = loggerPreMessageFormat + "${message}\n" + "${wspace}${exclass}: ${exmessage}\n"
+                + "${wspace}    at ${frame}\n" + "${wspace}    Suppressed: ${exclass}: ${exmessage}\n"
                 + "${wspace}        ... 1 more\n";
         Throwable ex = newDefaultThrowable();
         ex.addSuppressed(newDefaultThrowable());
@@ -105,8 +95,7 @@ public class NTLoggingFormatTest {
         repl.put("logger", LOGGER_NAME);
         repl.put("level", LEVEL);
 
-        int wspace = StringSubstitution.formatting(loggerPreMessageFormat)
-                .substitute(repl.build()).length();
+        int wspace = StringSubstitution.formatting(loggerPreMessageFormat).substitute(repl.build()).length();
         String whitespace = Strings.repeat(" ", wspace);
         repl.put("wspace", whitespace);
         repl.put("message", MESSAGE);
@@ -114,8 +103,7 @@ public class NTLoggingFormatTest {
         repl.put("exmessage", EX_MESSAGE);
         repl.put("frame", DEFAULT_FRAME);
 
-        String expected = StringSubstitution.formatting(expectedFormat)
-                .substitute(repl.build());
+        String expected = StringSubstitution.formatting(expectedFormat).substitute(repl.build());
 
         String wouldLog = this.loggingFormat.doLayout(event);
         assertEquals(expected, wouldLog);
@@ -124,10 +112,8 @@ public class NTLoggingFormatTest {
     @Test
     public void causedExceptionPrinting() {
         final String loggerPreMessageFormat = "[${date}] [${logger}@${level}] ";
-        final String expectedFormat = loggerPreMessageFormat + "${message}\n"
-                + "${wspace}${exclass}: ${exmessage}\n"
-                + "${wspace}    at ${frame}\n"
-                + "${wspace}Caused by: ${exclass}: ${exmessage}\n"
+        final String expectedFormat = loggerPreMessageFormat + "${message}\n" + "${wspace}${exclass}: ${exmessage}\n"
+                + "${wspace}    at ${frame}\n" + "${wspace}Caused by: ${exclass}: ${exmessage}\n"
                 + "${wspace}    ... 1 more\n";
         Throwable ex = newDefaultThrowable();
         ex.initCause(newDefaultThrowable());
@@ -137,8 +123,7 @@ public class NTLoggingFormatTest {
         repl.put("logger", LOGGER_NAME);
         repl.put("level", LEVEL);
 
-        int wspace = StringSubstitution.formatting(loggerPreMessageFormat)
-                .substitute(repl.build()).length();
+        int wspace = StringSubstitution.formatting(loggerPreMessageFormat).substitute(repl.build()).length();
         String whitespace = Strings.repeat(" ", wspace);
         repl.put("wspace", whitespace);
         repl.put("message", MESSAGE);
@@ -146,8 +131,7 @@ public class NTLoggingFormatTest {
         repl.put("exmessage", EX_MESSAGE);
         repl.put("frame", DEFAULT_FRAME);
 
-        String expected = StringSubstitution.formatting(expectedFormat)
-                .substitute(repl.build());
+        String expected = StringSubstitution.formatting(expectedFormat).substitute(repl.build());
 
         String wouldLog = this.loggingFormat.doLayout(event);
         assertEquals(expected, wouldLog);
@@ -156,12 +140,9 @@ public class NTLoggingFormatTest {
     @Test
     public void causedAndSuppressedExceptionPrinting() {
         final String loggerPreMessageFormat = "[${date}] [${logger}@${level}] ";
-        final String expectedFormat = loggerPreMessageFormat + "${message}\n"
-                + "${wspace}${exclass}: ${exmessage}\n"
-                + "${wspace}    at ${frame}\n"
-                + "${wspace}    Suppressed: ${exclass}: ${exmessage}\n"
-                + "${wspace}        ... 1 more\n"
-                + "${wspace}Caused by: ${exclass}: ${exmessage}\n"
+        final String expectedFormat = loggerPreMessageFormat + "${message}\n" + "${wspace}${exclass}: ${exmessage}\n"
+                + "${wspace}    at ${frame}\n" + "${wspace}    Suppressed: ${exclass}: ${exmessage}\n"
+                + "${wspace}        ... 1 more\n" + "${wspace}Caused by: ${exclass}: ${exmessage}\n"
                 + "${wspace}    ... 1 more\n";
         Throwable ex = newDefaultThrowable();
         ex.addSuppressed(newDefaultThrowable());
@@ -172,8 +153,7 @@ public class NTLoggingFormatTest {
         repl.put("logger", LOGGER_NAME);
         repl.put("level", LEVEL);
 
-        int wspace = StringSubstitution.formatting(loggerPreMessageFormat)
-                .substitute(repl.build()).length();
+        int wspace = StringSubstitution.formatting(loggerPreMessageFormat).substitute(repl.build()).length();
         String whitespace = Strings.repeat(" ", wspace);
         repl.put("wspace", whitespace);
         repl.put("message", MESSAGE);
@@ -181,8 +161,7 @@ public class NTLoggingFormatTest {
         repl.put("exmessage", EX_MESSAGE);
         repl.put("frame", DEFAULT_FRAME);
 
-        String expected = StringSubstitution.formatting(expectedFormat)
-                .substitute(repl.build());
+        String expected = StringSubstitution.formatting(expectedFormat).substitute(repl.build());
 
         String wouldLog = this.loggingFormat.doLayout(event);
         assertEquals(expected, wouldLog);
@@ -191,14 +170,10 @@ public class NTLoggingFormatTest {
     @Test
     public void causedAndSuppressedWithCauseExceptionPrinting() {
         final String loggerPreMessageFormat = "[${date}] [${logger}@${level}] ";
-        final String expectedFormat = loggerPreMessageFormat + "${message}\n"
-                + "${wspace}${exclass}: ${exmessage}\n"
-                + "${wspace}    at ${frame}\n"
-                + "${wspace}    Suppressed: ${exclass}: ${exmessage}\n"
-                + "${wspace}        ... 1 more\n"
-                + "${wspace}    Caused by: ${exclass}: ${exmessage}\n"
-                + "${wspace}        ... 1 more\n"
-                + "${wspace}Caused by: ${exclass}: ${exmessage}\n"
+        final String expectedFormat = loggerPreMessageFormat + "${message}\n" + "${wspace}${exclass}: ${exmessage}\n"
+                + "${wspace}    at ${frame}\n" + "${wspace}    Suppressed: ${exclass}: ${exmessage}\n"
+                + "${wspace}        ... 1 more\n" + "${wspace}    Caused by: ${exclass}: ${exmessage}\n"
+                + "${wspace}        ... 1 more\n" + "${wspace}Caused by: ${exclass}: ${exmessage}\n"
                 + "${wspace}    ... 1 more\n";
         Throwable ex = newDefaultThrowable();
         Throwable sup = newDefaultThrowable();
@@ -211,8 +186,7 @@ public class NTLoggingFormatTest {
         repl.put("logger", LOGGER_NAME);
         repl.put("level", LEVEL);
 
-        int wspace = StringSubstitution.formatting(loggerPreMessageFormat)
-                .substitute(repl.build()).length();
+        int wspace = StringSubstitution.formatting(loggerPreMessageFormat).substitute(repl.build()).length();
         String whitespace = Strings.repeat(" ", wspace);
         repl.put("wspace", whitespace);
         repl.put("message", MESSAGE);
@@ -220,8 +194,7 @@ public class NTLoggingFormatTest {
         repl.put("exmessage", EX_MESSAGE);
         repl.put("frame", DEFAULT_FRAME);
 
-        String expected = StringSubstitution.formatting(expectedFormat)
-                .substitute(repl.build());
+        String expected = StringSubstitution.formatting(expectedFormat).substitute(repl.build());
 
         String wouldLog = this.loggingFormat.doLayout(event);
         assertEquals(expected, wouldLog);
@@ -243,8 +216,7 @@ public class NTLoggingFormatTest {
         ex.initCause(cause);
         cause.initCause(ex);
         try {
-            ILoggingEvent event =
-                    LoggingEvents.create(FQCN, LEVEL, MESSAGE, ex);
+            ILoggingEvent event = LoggingEvents.create(FQCN, LEVEL, MESSAGE, ex);
             // ImmutableMap.Builder<String, Object> repl =
             // ImmutableMap.builder();
             // repl.put("date", formatTimestamp(event.getTimeStamp()));
@@ -268,9 +240,7 @@ public class NTLoggingFormatTest {
             String wouldLog = this.loggingFormat.doLayout(event);
             // assertEquals(expected, wouldLog);
         } catch (StackOverflowError noStack) {
-            assertTrue("stack not in logback",
-                    String.valueOf(noStack.getStackTrace()[5])
-                            .contains("ThrowableProxy"));
+            assertTrue("stack not in logback", String.valueOf(noStack.getStackTrace()[5]).contains("ThrowableProxy"));
         }
     }
 

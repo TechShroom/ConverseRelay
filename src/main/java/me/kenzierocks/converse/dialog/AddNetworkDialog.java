@@ -18,17 +18,12 @@ import me.kenzierocks.converse.dialog.Form.FieldEntry;
 import me.kenzierocks.converse.dialog.Form.FormImplementer;
 import me.kenzierocks.converse.util.IRCUtil;
 
-public class AddNetworkDialog extends Dialog<Network>
-        implements FormImplementer {
+public class AddNetworkDialog extends Dialog<Network> implements FormImplementer {
 
-    private static final FieldEntry NET_NAME =
-            new FieldEntry("network-name", "Network name");
-    private static final FieldEntry NET_ADDR =
-            new FieldEntry("network-address", "Network address");
-    private static final FieldEntry NET_PORT =
-            new FieldEntry("network-port", "Network port");
-    private static final FieldEntry NICK_NAME =
-            new FieldEntry("nick-name", "Nick name");
+    private static final FieldEntry NET_NAME = new FieldEntry("network-name", "Network name");
+    private static final FieldEntry NET_ADDR = new FieldEntry("network-address", "Network address");
+    private static final FieldEntry NET_PORT = new FieldEntry("network-port", "Network port");
+    private static final FieldEntry NICK_NAME = new FieldEntry("nick-name", "Nick name");
 
     private static final Pattern HOST_ADDRESS_REGEX;
     static {
@@ -39,19 +34,16 @@ public class AddNetworkDialog extends Dialog<Network>
     }
 
     private static final ButtonType CANCEL = ButtonType.CANCEL;
-    private static final ButtonType CREATE =
-            new ButtonType("Create", ButtonData.OK_DONE);
+    private static final ButtonType CREATE = new ButtonType("Create", ButtonData.OK_DONE);
 
     private final Form form;
 
     public AddNetworkDialog() {
-        ObservableList<ButtonType> buttonTypes =
-                getDialogPane().getButtonTypes();
+        ObservableList<ButtonType> buttonTypes = getDialogPane().getButtonTypes();
         buttonTypes.clear();
         buttonTypes.add(CANCEL);
         buttonTypes.add(CREATE);
-        getDialogPane().setContent(this.form =
-                Form.implement(this, NET_NAME, NET_ADDR, NET_PORT, NICK_NAME));
+        getDialogPane().setContent(this.form = Form.implement(this, NET_NAME, NET_ADDR, NET_PORT, NICK_NAME));
         setResultConverter(this::convert);
         setTitle("Add Network");
     }
@@ -59,8 +51,7 @@ public class AddNetworkDialog extends Dialog<Network>
     @Override
     public void setDefaults(Form form) {
         form.setInputBoxContents(NET_PORT, Network.DEFAULT_PORT);
-        form.setInputBoxContents(NICK_NAME,
-                ConverseRelay.CONFIG.getDefaults().getNickName());
+        form.setInputBoxContents(NICK_NAME, ConverseRelay.CONFIG.getDefaults().getNickName());
     }
 
     @Override
@@ -90,8 +81,7 @@ public class AddNetworkDialog extends Dialog<Network>
 
     @Override
     public void onValidateStateChange(Form form, boolean valid) {
-        Optional.ofNullable(getDialogPane().lookupButton(CREATE))
-                .ifPresent(b -> b.setDisable(!valid));
+        Optional.ofNullable(getDialogPane().lookupButton(CREATE)).ifPresent(b -> b.setDisable(!valid));
     }
 
     protected Network convert(ButtonType bt) {

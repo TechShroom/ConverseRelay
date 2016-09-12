@@ -27,8 +27,7 @@ public class SplittingOutputStream extends OutputStream {
             return new OutputStreamLike() {
 
                 @Override
-                public void write(byte[] b, int off, int len)
-                        throws IOException {
+                public void write(byte[] b, int off, int len) throws IOException {
                     stream.write(b, off, len);
                 }
 
@@ -59,8 +58,7 @@ public class SplittingOutputStream extends OutputStream {
             return new OutputStreamLike() {
 
                 @Override
-                public void write(byte[] b, int off, int len)
-                        throws IOException {
+                public void write(byte[] b, int off, int len) throws IOException {
                     stream.write(b, off, len);
                 }
 
@@ -96,8 +94,7 @@ public class SplittingOutputStream extends OutputStream {
                 return from((OutputStream) o);
             }
             throw new IllegalArgumentException(
-                    "Don't know how to resolve " + o.getClass().getName()
-                            + " to an OutputStreamLike object");
+                    "Don't know how to resolve " + o.getClass().getName() + " to an OutputStreamLike object");
         }
 
         void write(int b) throws IOException;
@@ -110,13 +107,11 @@ public class SplittingOutputStream extends OutputStream {
 
     public static PrintStream splittingPrintStream(Object... printStreams) {
         OutputStreamLike[] outStreams =
-                Stream.of(printStreams).map(OutputStreamLike::resolve)
-                        .toArray(OutputStreamLike[]::new);
+                Stream.of(printStreams).map(OutputStreamLike::resolve).toArray(OutputStreamLike[]::new);
         return new PrintStream(new SplittingOutputStream(outStreams));
     }
 
-    public static PrintStream
-            splittingPrintStream(OutputStreamLike... printStreams) {
+    public static PrintStream splittingPrintStream(OutputStreamLike... printStreams) {
         return new PrintStream(new SplittingOutputStream(printStreams));
     }
 
@@ -126,8 +121,7 @@ public class SplittingOutputStream extends OutputStream {
         this.streams = ImmutableList.copyOf(outputStreams);
     }
 
-    private void runOverStreams(IOConsumer<OutputStreamLike> func)
-            throws IOException {
+    private void runOverStreams(IOConsumer<OutputStreamLike> func) throws IOException {
         IOException first = null;
         for (OutputStreamLike outputStream : this.streams) {
             try {

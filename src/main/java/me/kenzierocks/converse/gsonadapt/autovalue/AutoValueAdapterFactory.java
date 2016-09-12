@@ -11,8 +11,7 @@ import com.google.gson.stream.JsonWriter;
 
 public final class AutoValueAdapterFactory implements TypeAdapterFactory {
 
-    private static final class SpecialiedAutoValueAdapter<T>
-            extends TypeAdapter<T> {
+    private static final class SpecialiedAutoValueAdapter<T> extends TypeAdapter<T> {
 
         private final TypeAdapter<T> delegate;
 
@@ -34,8 +33,7 @@ public final class AutoValueAdapterFactory implements TypeAdapterFactory {
                 // @Nullable field to null. Uh oh!
                 t.hashCode();
             } catch (NullPointerException invalidObjectState) {
-                throw new IllegalStateException(
-                        "Input JSON had an invalid format, some fields ended up null.",
+                throw new IllegalStateException("Input JSON had an invalid format, some fields ended up null.",
                         invalidObjectState);
             }
             return t;
@@ -52,18 +50,15 @@ public final class AutoValueAdapterFactory implements TypeAdapterFactory {
         }
 
         String packageName = rawType.getPackage().getName();
-        String className = rawType.getName().substring(packageName.length() + 1)
-                .replace('$', '_');
+        String className = rawType.getName().substring(packageName.length() + 1).replace('$', '_');
         String autoValueName = packageName + ".AutoValue_" + className;
 
         try {
             // AutoValue_T instanceof T
             Class<T> autoValueType = (Class<T>) Class.forName(autoValueName);
-            return new SpecialiedAutoValueAdapter<T>(
-                    gson.getAdapter(autoValueType));
+            return new SpecialiedAutoValueAdapter<T>(gson.getAdapter(autoValueType));
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(
-                    "Could not load AutoValue type " + autoValueName, e);
+            throw new RuntimeException("Could not load AutoValue type " + autoValueName, e);
         }
     }
 

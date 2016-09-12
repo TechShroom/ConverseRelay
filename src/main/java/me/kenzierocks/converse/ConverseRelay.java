@@ -35,17 +35,14 @@ public class ConverseRelay extends Application {
         // Ugly hack to get JavaFX to shutdown on logging fail
         PrintStream oldErr = System.err;
         ByteArrayOutputStream capture = new ByteArrayOutputStream(0);
-        PrintStream splitter =
-                SplittingOutputStream.splittingPrintStream(oldErr, capture);
+        PrintStream splitter = SplittingOutputStream.splittingPrintStream(oldErr, capture);
         System.setErr(splitter);
         LOGGER = LoggerFactory.getLogger(ConverseRelay.class);
         System.err.flush();
         System.setErr(oldErr);
         String captured = capture.toString();
         try {
-            checkState(
-                    !captured.contains(
-                            "Failed to instantiate [ch.qos.logback.classic.LoggerContext]"),
+            checkState(!captured.contains("Failed to instantiate [ch.qos.logback.classic.LoggerContext]"),
                     "failed to load logging: %s", captured);
         } catch (IllegalStateException boom) {
             // Force shutdown.
@@ -70,8 +67,7 @@ public class ConverseRelay extends Application {
     }
 
     public static void main(String[] args) throws Exception {
-        LOGGER.info("Launching " + ConverseRelay.class.getName()
-                + " with arguments " + Arrays.toString(args));
+        LOGGER.info("Launching " + ConverseRelay.class.getName() + " with arguments " + Arrays.toString(args));
         // Quit on all exceptions.
         Thread.setDefaultUncaughtExceptionHandler((t, ex) -> {
             Platform.exit();
@@ -86,8 +82,7 @@ public class ConverseRelay extends Application {
         Application.launch(args);
     }
 
-    private static final AtomicReference<ConverseRelay> app =
-            new AtomicReference<>();
+    private static final AtomicReference<ConverseRelay> app = new AtomicReference<>();
 
     public static ConverseRelay getApplication() {
         ConverseRelay unwrapped = app.get();
@@ -108,31 +103,23 @@ public class ConverseRelay extends Application {
         Parent parent = FXMLLoader.load(getClass().getResource("/main.fxml"));
         Platform.runLater(() -> {
             @SuppressWarnings("unchecked")
-            TreeView<String> netView =
-                    (TreeView<String>) parent.lookup("#network-tree");
-            ((Parent) netView.getParent()).getStylesheets()
-                    .add(getClass().getClassLoader()
-                            .getResource("css/network-label.css").toString());
+            TreeView<String> netView = (TreeView<String>) parent.lookup("#network-tree");
+            netView.getParent().getStylesheets()
+                    .add(getClass().getClassLoader().getResource("css/network-label.css").toString());
             TreeItem<String> root = new TreeItem<>();
-            root.getChildren()
-                    .addAll(CONFIG.getNetworks().stream()
-                            .map(this.netManager::loadNetwork)
-                            .collect(Collectors.toList()));
+            root.getChildren().addAll(
+                    CONFIG.getNetworks().stream().map(this.netManager::loadNetwork).collect(Collectors.toList()));
             netView.setRoot(root);
             netView.setShowRoot(false);
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                LOGGER.debug("Detected OSX from os.name="
-                        + System.getProperty("os.name")
-                        + ", configuring menus for OSX");
+                LOGGER.debug(
+                        "Detected OSX from os.name=" + System.getProperty("os.name") + ", configuring menus for OSX");
                 // OSX! DO THE TOOLBARS
                 MenuBar menuBar = (MenuBar) parent.lookup("#menubar");
                 menuBar.setUseSystemMenuBar(true);
                 // This behemoth disables the quit menu since OSX provides one.
-                menuBar.getMenus().stream()
-                        .filter(x -> x.getText().equals("File")).findFirst()
-                        .ifPresent(m -> m.getItems().stream()
-                                .filter(x -> x.getText().equals("Quit"))
-                                .findFirst()
+                menuBar.getMenus().stream().filter(x -> x.getText().equals("File")).findFirst()
+                        .ifPresent(m -> m.getItems().stream().filter(x -> x.getText().equals("Quit")).findFirst()
                                 .ifPresent(mi -> mi.setVisible(false)));
                 // Set theme
                 // AquaFx.style();
@@ -140,8 +127,7 @@ public class ConverseRelay extends Application {
         });
 
         WindowSettings windowSettings = CONFIG.getWindowSettings();
-        primaryStage.setScene(new Scene(parent, windowSettings.getWidth(),
-                windowSettings.getHeight()));
+        primaryStage.setScene(new Scene(parent, windowSettings.getWidth(), windowSettings.getHeight()));
         primaryStage.setTitle("ConverseRelay");
         primaryStage.centerOnScreen();
         primaryStage.show();
@@ -159,23 +145,19 @@ public class ConverseRelay extends Application {
         this.netManager.shutdown();
     }
 
-    private void onWidthChange(ObservableValue<? extends Number> obs,
-            Number old, Number newVal) {
+    private void onWidthChange(ObservableValue<? extends Number> obs, Number old, Number newVal) {
         CONFIG.transformWindowSettings(ws -> ws.withWidth(newVal.intValue()));
     }
 
-    private void onHeightChange(ObservableValue<? extends Number> obs,
-            Number old, Number newVal) {
+    private void onHeightChange(ObservableValue<? extends Number> obs, Number old, Number newVal) {
         CONFIG.transformWindowSettings(ws -> ws.withHeight(newVal.intValue()));
     }
 
-    private void onXChange(ObservableValue<? extends Number> obs, Number old,
-            Number newVal) {
+    private void onXChange(ObservableValue<? extends Number> obs, Number old, Number newVal) {
         CONFIG.transformWindowSettings(ws -> ws.withX(newVal.intValue()));
     }
 
-    private void onYChange(ObservableValue<? extends Number> obs, Number old,
-            Number newVal) {
+    private void onYChange(ObservableValue<? extends Number> obs, Number old, Number newVal) {
         CONFIG.transformWindowSettings(ws -> ws.withY(newVal.intValue()));
     }
 

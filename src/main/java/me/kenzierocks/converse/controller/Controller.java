@@ -20,16 +20,14 @@ public class Controller {
     public void openAddNetworkDialog() {
         new AddNetworkDialog().showAndWait().ifPresent(net -> {
             ConverseRelay.CONFIG.transformNetworks(netlist -> {
-                return Stream.concat(Stream.of(net), netlist.stream())
-                        .collect(Collectors.toList());
+                return Stream.concat(Stream.of(net), netlist.stream()).collect(Collectors.toList());
             });
         });
     }
 
     @FXML
     public void openSetDefaultsDialog() {
-        new SetDefaultsDialog().showAndWait()
-                .ifPresent(ConverseRelay.CONFIG::setDefaults);
+        new SetDefaultsDialog().showAndWait().ifPresent(ConverseRelay.CONFIG::setDefaults);
     }
 
 }

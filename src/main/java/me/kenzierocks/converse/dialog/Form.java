@@ -61,8 +61,7 @@ public abstract class Form extends Pane {
     public static class TackOn {
 
         protected static final TackOn INPUT = new TackOn("input");
-        protected static final TackOn VALIDATE_MARK =
-                new TackOn("validate-mark");
+        protected static final TackOn VALIDATE_MARK = new TackOn("validate-mark");
 
         protected final String tackOn;
 
@@ -86,8 +85,7 @@ public abstract class Form extends Pane {
 
     }
 
-    protected static final ButtonType CREATE =
-            new ButtonType("Create", ButtonData.OK_DONE);
+    protected static final ButtonType CREATE = new ButtonType("Create", ButtonData.OK_DONE);
     protected static final ButtonType CANCEL = ButtonType.CANCEL;
     private static final String CHECKED_BOX = "\u2611";
     private static final String UNCHECKED_BOX = "\u2610";
@@ -118,8 +116,7 @@ public abstract class Form extends Pane {
         return new FormDelegate(entries);
     }
 
-    private static Parent generateParentForEntries(Pane form,
-            List<FieldEntry> entries) {
+    private static Parent generateParentForEntries(Pane form, List<FieldEntry> entries) {
         Pane parent = form;
         GridPane grid = new GridPane();
         parent.getChildren().add(grid);
@@ -174,12 +171,10 @@ public abstract class Form extends Pane {
     }
 
     protected final List<FieldEntry> entries;
-    protected final ObservableSet<FieldEntry> valid =
-            FXCollections.observableSet();
+    protected final ObservableSet<FieldEntry> valid = FXCollections.observableSet();
 
     protected Form(FieldEntry... entries) {
-        checkArgument(entries.length == Stream.of(entries).distinct().count(),
-                "duplicates");
+        checkArgument(entries.length == Stream.of(entries).distinct().count(), "duplicates");
         this.entries = ImmutableList.copyOf(entries);
         generateParentForEntries(this, this.entries);
         setDefaults();
@@ -205,8 +200,7 @@ public abstract class Form extends Pane {
     /**
      * The validator will never be passed null, and the string will be trimmed.
      */
-    public void attachValidator(FieldEntry field,
-            Predicate<String> validator) {
+    public void attachValidator(FieldEntry field, Predicate<String> validator) {
         Consumer<String> listener = val -> {
             try {
                 if (val != null && validator.test(val.trim())) {
@@ -217,12 +211,8 @@ public abstract class Form extends Pane {
             } catch (RuntimeException | Error t) {
                 // User knows best.
                 this.valid.add(field);
-                LOGGER.warn(
-                        "assuming user knows best for field " + field
-                                + ", input: "
-                                + Arrays.toString(
-                                        val.getBytes(StandardCharsets.UTF_8)),
-                        t);
+                LOGGER.warn("assuming user knows best for field " + field + ", input: "
+                        + Arrays.toString(val.getBytes(StandardCharsets.UTF_8)), t);
                 throw t;
             }
         };
@@ -241,8 +231,7 @@ public abstract class Form extends Pane {
     }
 
     public void setInputBoxContents(FieldEntry id, Object text) {
-        getInputBox(id).setText(Optional.ofNullable(text).map(String::valueOf)
-                .map(String::trim).orElse(""));
+        getInputBox(id).setText(Optional.ofNullable(text).map(String::valueOf).map(String::trim).orElse(""));
     }
 
     protected String getInputBoxContents(FieldEntry id) {

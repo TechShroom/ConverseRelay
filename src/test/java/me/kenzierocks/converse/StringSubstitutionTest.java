@@ -122,30 +122,23 @@ public class StringSubstitutionTest {
         // \uD83C\uDDFA\uD83C\uDDF8 -> American flag
         String input = "${productName\uD83C\uDDFA\uD83C\uDDF8}™";
         String expected = "ConverseRelay™";
-        Map<String, String> map = ImmutableMap
-                .of("productName\uD83C\uDDFA\uD83C\uDDF8", "ConverseRelay");
+        Map<String, String> map = ImmutableMap.of("productName\uD83C\uDDFA\uD83C\uDDF8", "ConverseRelay");
         assertEqual(expected, input, map);
     }
 
-    private void assertMissingKey(String format,
-            Map<String, String> replacements) {
+    private void assertMissingKey(String format, Map<String, String> replacements) {
         try {
-            String result = StringSubstitution.formatting(format)
-                    .substitute(replacements);
+            String result = StringSubstitution.formatting(format).substitute(replacements);
             fail("unexpected result " + result);
         } catch (IllegalStateException failedSubstitute) {
             String start = "Missing required key";
-            assertTrue(
-                    "doesn't start with " + start + ": "
-                            + failedSubstitute.getLocalizedMessage(),
+            assertTrue("doesn't start with " + start + ": " + failedSubstitute.getLocalizedMessage(),
                     failedSubstitute.getLocalizedMessage().startsWith(start));
         }
     }
 
-    private void assertEqual(String expect, String format,
-            Map<String, String> replacements) {
-        String result =
-                StringSubstitution.formatting(format).substitute(replacements);
+    private void assertEqual(String expect, String format, Map<String, String> replacements) {
+        String result = StringSubstitution.formatting(format).substitute(replacements);
         assertEquals(expect, result);
     }
 

@@ -12,14 +12,13 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public enum OptionalIntAdapter
-        implements JsonSerializer<OptionalInt>, JsonDeserializer<OptionalInt> {
+public enum OptionalIntAdapter implements JsonSerializer<OptionalInt>, JsonDeserializer<OptionalInt> {
 
     INSTANCE;
 
     @Override
-    public OptionalInt deserialize(JsonElement json, Type typeOfT,
-            JsonDeserializationContext context) throws JsonParseException {
+    public OptionalInt deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
         if (JsonNull.INSTANCE.equals(json)) {
             return OptionalInt.empty();
         }
@@ -27,10 +26,8 @@ public enum OptionalIntAdapter
     }
 
     @Override
-    public JsonElement serialize(OptionalInt src, Type typeOfSrc,
-            JsonSerializationContext context) {
-        return src.isPresent() ? new JsonPrimitive(src.getAsInt())
-                : JsonNull.INSTANCE;
+    public JsonElement serialize(OptionalInt src, Type typeOfSrc, JsonSerializationContext context) {
+        return src.isPresent() ? new JsonPrimitive(src.getAsInt()) : JsonNull.INSTANCE;
     }
 
 }

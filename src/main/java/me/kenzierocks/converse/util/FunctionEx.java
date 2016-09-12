@@ -50,8 +50,7 @@ public interface FunctionEx<T, R, E extends Throwable> {
      *
      * @see #andThen(Function)
      */
-    default <V> FunctionEx<V, R, E>
-            compose(FunctionEx<? super V, ? extends T, ? extends E> before) {
+    default <V> FunctionEx<V, R, E> compose(FunctionEx<? super V, ? extends T, ? extends E> before) {
         Objects.requireNonNull(before);
         return (V v) -> apply(before.apply(v));
     }
@@ -74,8 +73,7 @@ public interface FunctionEx<T, R, E extends Throwable> {
      *
      * @see #compose(Function)
      */
-    default <V> FunctionEx<T, V, E>
-            andThen(FunctionEx<? super R, ? extends V, ? extends E> after) {
+    default <V> FunctionEx<T, V, E> andThen(FunctionEx<? super R, ? extends V, ? extends E> after) {
         Objects.requireNonNull(after);
         return (T t) -> after.apply(apply(t));
     }
@@ -103,16 +101,14 @@ public interface FunctionEx<T, R, E extends Throwable> {
         return t -> t;
     }
 
-    static <T, R, E extends Throwable> FunctionEx<T, R, E>
-            throwing(E exception) {
+    static <T, R, E extends Throwable> FunctionEx<T, R, E> throwing(E exception) {
         Objects.requireNonNull(exception);
         return t -> {
             throw exception;
         };
     }
 
-    static <T, R> FunctionEx<T, R, RuntimeException>
-            of(Function<T, R> function) {
+    static <T, R> FunctionEx<T, R, RuntimeException> of(Function<T, R> function) {
         Objects.requireNonNull(function);
         return function::apply;
     }

@@ -21,8 +21,7 @@ public final class StringSubstitution {
     /**
      * Cleans up generic hell.
      */
-    private interface FormatFunction
-            extends Function<Map<String, String>, String> {
+    private interface FormatFunction extends Function<Map<String, String>, String> {
     }
 
     public static StringSubstitution formatting(String format) {
@@ -36,11 +35,9 @@ public final class StringSubstitution {
         boolean seenBackslash = false;
         StringBuilder notKeySoFar = new StringBuilder();
         StringBuilder keySoFar = null;
-        for (PrimitiveIterator.OfInt iter = format.codePoints().iterator(); iter
-                .hasNext();) {
+        for (PrimitiveIterator.OfInt iter = format.codePoints().iterator(); iter.hasNext();) {
             int point = iter.nextInt();
-            StringBuilder target =
-                    MoreObjects.firstNonNull(keySoFar, notKeySoFar);
+            StringBuilder target = MoreObjects.firstNonNull(keySoFar, notKeySoFar);
             if (point == '\\') {
                 if (seenBackslash) {
                     target.append('\\');
@@ -54,8 +51,7 @@ public final class StringSubstitution {
                     continue;
                 }
                 try {
-                    if (!seenBackslash && point == '{' && seenDollar
-                            && keySoFar == null) {
+                    if (!seenBackslash && point == '{' && seenDollar && keySoFar == null) {
                         // NEW PART HERE
                         createTextPart(notKeySoFar).ifPresent(parts::add);
                         notKeySoFar.setLength(0);
@@ -101,14 +97,12 @@ public final class StringSubstitution {
         if (keySoFar != null) {
             // Missing end '}' -> not a key
             // NEW PART HERE
-            createTextPart(new StringBuilder("${").append(keySoFar))
-                    .ifPresent(parts::add);
+            createTextPart(new StringBuilder("${").append(keySoFar)).ifPresent(parts::add);
         }
         return parts.build();
     }
 
-    private static Optional<FormatFunction>
-            createTextPart(StringBuilder notKeySoFar) {
+    private static Optional<FormatFunction> createTextPart(StringBuilder notKeySoFar) {
         if (notKeySoFar.length() == 0) {
             return Optional.empty();
         }
@@ -136,8 +130,7 @@ public final class StringSubstitution {
         if (this.parts.isEmpty()) {
             return "";
         }
-        Map<String, String> replString =
-                Maps.transformValues(replacements, String::valueOf);
+        Map<String, String> replString = Maps.transformValues(replacements, String::valueOf);
         StringBuilder builder = new StringBuilder();
         for (FormatFunction formatFunction : this.parts) {
             builder.append(formatFunction.apply(replString));
