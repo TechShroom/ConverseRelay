@@ -10,6 +10,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,6 +181,8 @@ public abstract class Form extends Pane {
         generateParentForEntries(this, this.entries);
         setDefaults();
         this.valid.addListener(this::onValidatedFieldChange);
+        // must assume valid if not provided:
+        this.valid.addAll(this.entries);
         attachValidation();
     }
 
@@ -218,7 +222,7 @@ public abstract class Form extends Pane {
         };
         TextInputControl inputBox = getInputBox(field);
         inputBox.textProperty().addListener((obs, oldVal, newVal) -> {
-            listener.accept(newVal);
+            listener.accept(newVal.trim());
         });
         listener.accept(inputBox.getText());
     }
@@ -230,7 +234,7 @@ public abstract class Form extends Pane {
         }
     }
 
-    public void setInputBoxContents(FieldEntry id, Object text) {
+    public void setInputBoxContents(FieldEntry id, @Nullable Object text) {
         getInputBox(id).setText(Optional.ofNullable(text).map(String::valueOf).map(String::trim).orElse(""));
     }
 
